@@ -9,3 +9,6 @@ def create_review(studentID, type, content):
 
 def get_reviews_by_id(studentID):
     return Review.query.filter_by(studentID=studentID)
+
+def get_latest_review(studentID):
+    return Review.query.filter_by(studentID=studentID).order_by(Review.reviewID.desc()).first()
