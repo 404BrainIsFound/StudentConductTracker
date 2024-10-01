@@ -12,7 +12,7 @@ Displays all student records and prompts for a student ID to add a review for.
 `search-student-id {id}` and `search-student-name {name}`<br>
 Accepts an ID or name and searches Student records for a direct match.
 
-`view-reviews {id}` <br>
+`view-reviews` <br>
 Displays all reviews for a student with a particular student ID.
 
 # Admin Commands
