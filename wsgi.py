@@ -5,7 +5,7 @@ from flask.cli import with_appcontext, AppGroup
 from App.database import db, get_migrate
 from App.models import User
 from App.main import create_app
-from App.controllers import ( create_user, get_all_users_json, get_all_users, initialize )
+from App.controllers import ( create_user, get_all_users_json, get_all_users, initialize, demo)
 from App.controllers.student import *
 from App.controllers.review import *
 
@@ -19,6 +19,11 @@ migrate = get_migrate(app)
 def init():
     initialize()
     print('database intialized')
+
+@app.cli.command("demo", help="Sets up a few Student and Review records to play with")
+def build_demo():
+    demo()
+    print("Demo database built")
 
 '''
 User Commands
@@ -71,14 +76,17 @@ app.cli.add_command(test)
 
 admin = AppGroup("admin", help="Group for managing student records")
 
-@admin.command("create-student", help="Add a new student record. Usage: \"create-student {id} {name}\"")
+@admin.command("create-student", help="Add a new student record. Usage: \"create-student {id} {name} {degree} {department} {faculty}\"")
 @click.argument("id")
 @click.argument("name")
-def create_student_command(id, name):
+@click.argument("degree", default="None")
+@click.argument("department", default="None")
+@click.argument("faculty", default="None")
+def create_student_command(id, name, degree, department, faculty):
     if (get_student_by_id(id) is not None):
         print(f'Student with id {id} already exists! Cannot create new student with the same id.')
         return
-    create_student(id, name)
+    create_student(id, name, degree, department, faculty)
     print(f'Student {name} created!')
 
 app.cli.add_command(admin)
@@ -105,30 +113,49 @@ def search_student_name_command(name):
     if (len(students) == 0):
         print("No students match that name.")
         return
-    for student in students:
-        student: Student
-        print(f'\n{student}\nLatest Review: {get_latest_review(student.studentID)}')
+    view_students(students)
 
-@staff.command("add-review", help="Adds a review for a particular student. Usage \"add-review {id}\"", short_help="Usage \"add-review {id}\"")
-@click.argument("id")
-def add_review_command(id):
+@staff.command("add-review", help="Adds a review for a particular student.")
+def add_review_command():
+    students = get_all_students()
+    view_students(students)
+    if (len(students) == 0):
+        return
+    id = input("Enter the ID of the student you wish to make a review for: ")
     if (get_student_by_id(id) is None):
         print("Invalid student ID!")
     else:
-        type = input("Enter review type (positive/negative): ")
-        content = input("Enter student review (Max 150 characters). Pressing ENTER will submit your review.\n")
+        type = None
+        while(type != "1" and type != "2"):
+            type = input("\nSelect review type:\n1. Positive\n2. Negative\nEnter choice: ")
+        if(int(type) == 1): type = "Positive"
+        else: type = "Negative"
+        content = input("\nEnter student review (Max 150 characters). Pressing ENTER will submit your review.\n")
         create_review(id, type, content)
         print(f'Successfully added {type} review for student {id}!')
 
-@staff.command("view-reviews", help="View all reviews from a particular student. Usage \"view-reviews {id}\"", short_help="Usage \"view-reviews {id}\"")
-@click.argument("id")
-def get_student_reviews_command(id):
+@staff.command("view-reviews", help="View all reviews from a particular student.")
+
+def get_student_reviews_command():
+    students = get_all_students()
+    view_students(students)
+    if (len(students) == 0):
+        return
+    id = input("\nEnter the ID of the student whose reviews you wish to view: ")
     if (get_student_by_id(id) is None):
         print("Invalid student ID!")
     else:
-        print(f'Showing reviews for student {id}\n{get_student_by_id(id)}')
+        print(f'\nShowing reviews for student {id}\n{get_student_by_id(id)}')
         for review in get_student_reviews(id):
             review: Review
             print(f'{review}\n')
 
 app.cli.add_command(staff)
+
+def view_students(students):
+    if (len(students) == 0):
+        print("There are no student records.")
+        return
+    for student in students:
+        student: Student
+        print(f'\n{student}\nLatest Review: {get_latest_review(student.studentID)}')

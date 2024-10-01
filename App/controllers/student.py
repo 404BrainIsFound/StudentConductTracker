@@ -2,8 +2,8 @@ from App.models import Student
 from App.models import Review
 from App.database import db
 
-def create_student(studentID, studentName):
-    newstudent = Student(studentID=studentID, studentName=studentName)
+def create_student(studentID, studentName, degree, department, faculty):
+    newstudent = Student(studentID=studentID, studentName=studentName, degree=degree, department=department, faculty=faculty)
     db.session.add(newstudent)
     db.session.commit()
     return newstudent
@@ -16,3 +16,6 @@ def get_student_by_id(studentID):
 
 def get_student_reviews(studentID):
     return Review.query.filter_by(studentID=studentID).all()
+
+def get_all_students():
+    return Student.query.all()
