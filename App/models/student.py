@@ -17,3 +17,12 @@ class Student(db.Model):
 
     def __repr__(self):
         return f'Student Name: {self.studentName}, Student ID: {self.studentID}, Degree: {self.degree}, Department: {self.department}, Faculty: {self.faculty}'
+    
+    def get_json(self):
+        return {
+            'studentID' : self.studentID,
+            'studentName' : self.studentName,
+            'degree' : self.degree,
+            'department' : self.department,
+            'faculty' : self.faculty
+        }
