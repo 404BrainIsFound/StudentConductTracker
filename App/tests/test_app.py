@@ -13,6 +13,7 @@ from App.controllers import (
     login,
     get_user,
     get_user_by_username,
+    get_student_by_id,
     update_user
 )
 
@@ -87,6 +88,15 @@ class AdminIntegrationTests(unittest.TestCase):
         admin = get_user_by_username("newadmin")
         self.assertEqual(admin.username, "newadmin")
         self.assertEqual(admin.type, "admin")
+    
+    def test_create_student(self):
+        newstudent = create_student(123456789, "John Doe", "BSc. Computer Science", "DCIT", "FST")
+        student = get_student_by_id(123456789)
+        self.assertEqual(student.studentID, 123456789)
+        self.assertEqual(student.studentName, "John Doe")
+        self.assertEqual(student.degree, "BSc. Computer Science")
+        self.assertEqual(student.department, "DCIT")
+        self.assertEqual(student.faculty, "FST")
 
 
 class StaffIntegrationTests(unittest.TestCase):
