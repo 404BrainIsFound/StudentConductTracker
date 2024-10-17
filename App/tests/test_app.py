@@ -14,6 +14,7 @@ from App.controllers import (
     get_user,
     get_user_by_username,
     get_student_by_id,
+    get_all_students_json,
     update_user
 )
 
@@ -97,6 +98,23 @@ class AdminIntegrationTests(unittest.TestCase):
         self.assertEqual(student.degree, "BSc. Computer Science")
         self.assertEqual(student.department, "DCIT")
         self.assertEqual(student.faculty, "FST")
+    
+    def test_get_all_students(self):
+        student = create_student(123456788, "Jane Doe", "BSc. Information Technology", "DCIT", "FST")
+        students = get_all_students_json()
+        expected_students = [
+                                {"studentID":123456788, 
+                                "studentName":"Jane Doe", 
+                                "degree":"BSc. Information Technology", 
+                                "department":"DCIT", 
+                                "faculty":"FST"},
+                                {"studentID":123456789, 
+                                "studentName":"John Doe", 
+                                "degree":"BSc. Computer Science", 
+                                "department":"DCIT", 
+                                "faculty":"FST"}
+                            ]
+        self.assertListEqual(expected_students, students)
 
 
 class StaffIntegrationTests(unittest.TestCase):
