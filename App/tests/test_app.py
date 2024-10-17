@@ -6,6 +6,9 @@ from App.database import db, create_db
 from App.models import User
 from App.controllers import (
     create_user,
+    create_admin,
+    create_staff,
+    create_student,
     get_all_users_json,
     login,
     get_user,
@@ -76,4 +79,21 @@ class UsersIntegrationTests(unittest.TestCase):
         user = get_user(1)
         assert user.username == "ronnie"
         
+
+class AdminIntegrationTests(unittest.TestCase):
+
+    def test_create_admin(self):
+        newadmin = create_admin("newadmin", "newadminpass")
+        admin = get_user_by_username("newadmin")
+        self.assertEqual(admin.username, "newadmin")
+        self.assertEqual(admin.type, "admin")
+
+
+class StaffIntegrationTests(unittest.TestCase):
+
+    def test_create_staff(self):
+        newstaff = create_staff("newstaff", "newstaffpass")
+        staff = get_user_by_username("newstaff")
+        self.assertEqual(staff.username, "newstaff")
+        self.assertEqual(staff.type, "staff")
 
