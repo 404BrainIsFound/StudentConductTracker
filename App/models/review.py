@@ -7,8 +7,9 @@ class Review(db.Model):
     type = db.Column(db.String(10), nullable=False)
     content = db.Column(db.String(150), nullable=False)
 
-    def __init__(self, studentID, type, content):
+    def __init__(self, studentID, staffID, type, content):
         self.studentID = studentID
+        self.staffID = staffID
         self.type = type
         self.content = content
 

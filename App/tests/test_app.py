@@ -9,12 +9,14 @@ from App.controllers import (
     create_admin,
     create_staff,
     create_student,
+    create_review,
     get_all_users_json,
     login,
     get_user,
     get_user_by_username,
     get_student_by_id,
     get_all_students_json,
+    get_latest_review_json,
     update_user
 )
 
@@ -65,6 +67,7 @@ def test_authenticate():
     user = create_user("bob", "bobpass")
     assert login("bob", "bobpass") != None
 
+
 class UsersIntegrationTests(unittest.TestCase):
 
     def test_create_user(self):
@@ -85,32 +88,32 @@ class UsersIntegrationTests(unittest.TestCase):
 class AdminIntegrationTests(unittest.TestCase):
 
     def test_create_admin(self):
-        newadmin = create_admin("newadmin", "newadminpass")
-        admin = get_user_by_username("newadmin")
-        self.assertEqual(admin.username, "newadmin")
+        newadmin = create_admin("ben", "benpass")
+        admin = get_user_by_username("ben")
+        self.assertEqual(admin.username, "ben")
         self.assertEqual(admin.type, "admin")
     
     def test_create_student(self):
-        newstudent = create_student(123456789, "John Doe", "BSc. Computer Science", "DCIT", "FST")
-        student = get_student_by_id(123456789)
-        self.assertEqual(student.studentID, 123456789)
-        self.assertEqual(student.studentName, "John Doe")
+        newstudent = create_student(101, "Mike Ross", "BSc. Computer Science", "DCIT", "FST")
+        student = get_student_by_id(101)
+        self.assertEqual(student.studentID, 101)
+        self.assertEqual(student.studentName, "Mike Ross")
         self.assertEqual(student.degree, "BSc. Computer Science")
         self.assertEqual(student.department, "DCIT")
         self.assertEqual(student.faculty, "FST")
     
     def test_get_all_students(self):
-        student = create_student(123456788, "Jane Doe", "BSc. Information Technology", "DCIT", "FST")
+        student = create_student(102, "Rachel Zane", "BSc. Information Technology", "DCIT", "FST")
         students = get_all_students_json()
         expected_students = [
-                                {"studentID":123456788, 
-                                "studentName":"Jane Doe", 
-                                "degree":"BSc. Information Technology", 
+                                {"studentID":101, 
+                                "studentName":"Mike Ross", 
+                                "degree":"BSc. Computer Science", 
                                 "department":"DCIT", 
                                 "faculty":"FST"},
-                                {"studentID":123456789, 
-                                "studentName":"John Doe", 
-                                "degree":"BSc. Computer Science", 
+                                {"studentID":102, 
+                                "studentName":"Rachel Zane", 
+                                "degree":"BSc. Information Technology", 
                                 "department":"DCIT", 
                                 "faculty":"FST"}
                             ]
@@ -124,4 +127,19 @@ class StaffIntegrationTests(unittest.TestCase):
         staff = get_user_by_username("newstaff")
         self.assertEqual(staff.username, "newstaff")
         self.assertEqual(staff.type, "staff")
+
+    def test_create_review(self):
+        staff = create_staff("gwen", "gwenpass")
+        staff = get_user_by_username("gwen")
+        student = create_student(103, "Harvey Spectre", "BSc. Computer Science (Special)", "DCIT", "FST")
+        review = create_review(103, staff.id, "Positive", "The best closer this city has ever seen")
+        expected_review = {
+            "reviewID": review.reviewID,
+            "studentID": 103,
+            "staffID": staff.id,
+            "type": "Positive",
+            "content": "The best closer this city has ever seen"
+        }
+        review = get_latest_review_json(103)
+        self.assertEqual(expected_review, review)
 
