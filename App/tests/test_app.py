@@ -91,9 +91,6 @@ def empty_db():
     db.drop_all()
 
 
-
-
-
 class UserIntegrationTests(unittest.TestCase):
 
     def test_create_user(self):
@@ -223,12 +220,12 @@ class StaffIntegrationTests(unittest.TestCase):
         self.assertEqual(expected_reviews, reviews)
 
     def test_searchStudentByName(self):
-        Student(101, "Mike Ross", "BSc. Computer Science", "DCIT", "FST")
-        searchStud = get_student_by_name("Mike Ross")
+        student = create_student(106, "Mikey Rossum", "BSc. Computer Science", "DCIT", "FST")
+        searchStud = get_student_by_name("Mikey Rossum")
 
         expected_student = [{
-                "studentID":101, 
-                "studentName":"Mike Ross", 
+                "studentID":106, 
+                "studentName":"Mikey Rossum", 
                 "degree":"BSc. Computer Science", 
                 "department":"DCIT", 
                 "faculty":"FST"
@@ -243,13 +240,13 @@ class StaffIntegrationTests(unittest.TestCase):
             self.assertEqual(found_student.faculty, expected_student[i]["faculty"])
 
             
-    def test_searchStudentByName(self):
-        Student(101, "Mike Ross", "BSc. Computer Science", "DCIT", "FST")
-        searchStud = get_student_by_id(101)
+    def test_searchStudentByID(self):
+        student = create_student(107, "Jane doe", "BSc. Computer Science", "DCIT", "FST")
+        searchStud = get_student_by_id(107)
 
         expected_student = {
-                "studentID":101, 
-                "studentName":"Mike Ross", 
+                "studentID":107, 
+                "studentName":"Jane doe", 
                 "degree":"BSc. Computer Science", 
                 "department":"DCIT", 
                 "faculty":"FST"
@@ -264,23 +261,23 @@ class StaffIntegrationTests(unittest.TestCase):
 
 
     def test_viewStudentReviews(self):
-        Student(101, "Mike Ross", "BSc. Computer Science", "DCIT", "FST")
-        review1 = create_review(101, 107, "Positive", "Has an amazing ability to remember details")
-        review2 = create_review(101, 107, "Negative", "Did not attend Harvard Law School")
+        student = create_student(108, "Dana Peterson", "BSc. Computer Science", "DCIT", "FST")
+        review1 = create_review(108, 107, "Positive", "Has an amazing ability to remember details")
+        review2 = create_review(108, 107, "Negative", "Did not attend Harvard Law School")
         
-        searchRev = get_reviews_by_student_id(101)
+        searchRev = get_reviews_by_student_id(108)
 
         expected_reviews = [
             {
                 "reviewID": review1.reviewID,
-                "studentID": 101,
+                "studentID": 108,
                 "staffID": 107,
                 "type": "Positive",
                 "content": "Has an amazing ability to remember details"
             },
             {
                 "reviewID": review2.reviewID,
-                "studentID": 101,
+                "studentID": 108,
                 "staffID": 107,
                 "type": "Negative",
                 "content": "Did not attend Harvard Law School"
@@ -299,11 +296,4 @@ class StaffIntegrationTests(unittest.TestCase):
         ]
         
         self.assertListEqual(expected_reviews, actual_reviews)
-
-       
-        
-
-
-
-
 
