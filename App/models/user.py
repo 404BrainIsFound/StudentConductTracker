@@ -18,6 +18,9 @@ class User(db.Model):
             'username': self.username
         }
 
+    def get_type(self):
+        return self.type
+        
     def set_password(self, password):
         """Create hashed password."""
         self.password = generate_password_hash(password)
