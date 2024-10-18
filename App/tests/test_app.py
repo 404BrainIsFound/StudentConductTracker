@@ -168,6 +168,22 @@ class StaffIntegrationTests(unittest.TestCase):
         }
         review = get_latest_review_json(103)
         self.assertEqual(expected_review, review)
-
-
+    
+    def test_get_latest_review(self):
+        staff1 = create_staff("kevin", "kevinpass")
+        staff1 = get_user_by_username("kevin")
+        staff2 = create_staff("max", "maxpass")
+        staff2 = get_user_by_username("max")
+        student = create_student(104, "Jessica Pearson", "BSc. Information Technology (Special)", "DCIT", "FST")
+        review1 = create_review(104, staff1.id, "Positive", "She is very hardworking.")
+        review2 = create_review(104, staff2.id, "Negative", "She does not repond well to threats.")
+        expected_review = {
+            "reviewID": review2.reviewID,
+            "studentID": 104,
+            "staffID": staff2.id,
+            "type": "Negative",
+            "content": "She does not repond well to threats."
+        }
+        review = get_latest_review_json(104)
+        self.assertEqual(expected_review, review)
 
