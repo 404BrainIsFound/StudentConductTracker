@@ -91,9 +91,7 @@ def empty_db():
     db.drop_all()
 
 
-def test_authenticate():
-    user = create_user("bob", "bobpass")
-    assert login("bob", "bobpass") != None
+
 
 
 class UserIntegrationTests(unittest.TestCase):
@@ -103,15 +101,21 @@ class UserIntegrationTests(unittest.TestCase):
         assert user.username == "rick"
 
     def test_get_all_users_json(self):
+        user = create_user("nick", "bobpass")
         users_json = get_all_users_json()
-        self.assertListEqual([{"id":1, "username":"bob"}, {"id":2, "username":"rick"}], users_json)
+        self.assertListEqual([{"id":1, "username":"rick"}, {"id":2, "username":"nick"}], users_json)
 
     # Tests data changes in the database
     def test_update_user(self):
         update_user(1, "ronnie")
         user = get_user(1)
         assert user.username == "ronnie"
-        
+
+
+def test_authenticate():
+    user = create_user("bob", "bobpass")
+    assert login("bob", "bobpass") != None
+
 
 class AdminIntegrationTests(unittest.TestCase):
 
