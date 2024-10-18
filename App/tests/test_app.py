@@ -17,8 +17,10 @@ from App.controllers import (
     get_user,
     get_user_by_username,
     get_student_by_id,
+    get_student_by_name,
     get_all_students_json,
     get_latest_review_json,
+    get_reviews_by_student_id,
     get_reviews_by_student_id_json,
     update_user
 )
@@ -89,27 +91,28 @@ def empty_db():
     db.drop_all()
 
 
-def test_authenticate():
-    user = create_user("bob", "bobpass")
-    assert login("bob", "bobpass") != None
-
-
-class UsersIntegrationTests(unittest.TestCase):
+class UserIntegrationTests(unittest.TestCase):
 
     def test_create_user(self):
         user = create_user("rick", "bobpass")
         assert user.username == "rick"
 
     def test_get_all_users_json(self):
+        user = create_user("nick", "bobpass")
         users_json = get_all_users_json()
-        self.assertListEqual([{"id":1, "username":"bob"}, {"id":2, "username":"rick"}], users_json)
+        self.assertListEqual([{"id":1, "username":"rick"}, {"id":2, "username":"nick"}], users_json)
 
     # Tests data changes in the database
     def test_update_user(self):
         update_user(1, "ronnie")
         user = get_user(1)
         assert user.username == "ronnie"
-        
+
+
+def test_authenticate():
+    user = create_user("bob", "bobpass")
+    assert login("bob", "bobpass") != None
+
 
 class AdminIntegrationTests(unittest.TestCase):
 
@@ -215,4 +218,82 @@ class StaffIntegrationTests(unittest.TestCase):
         ]
         reviews = get_reviews_by_student_id_json(105)
         self.assertEqual(expected_reviews, reviews)
+
+    def test_searchStudentByName(self):
+        student = create_student(106, "Mikey Rossum", "BSc. Computer Science", "DCIT", "FST")
+        searchStud = get_student_by_name("Mikey Rossum")
+
+        expected_student = [{
+                "studentID":106, 
+                "studentName":"Mikey Rossum", 
+                "degree":"BSc. Computer Science", 
+                "department":"DCIT", 
+                "faculty":"FST"
+        }]
+        self.assertEqual(len(searchStud), len(expected_student))
+
+        for i, found_student in enumerate(searchStud):
+            self.assertEqual(found_student.studentID, expected_student[i]["studentID"])
+            self.assertEqual(found_student.studentName, expected_student[i]["studentName"])
+            self.assertEqual(found_student.degree, expected_student[i]["degree"])
+            self.assertEqual(found_student.department, expected_student[i]["department"])
+            self.assertEqual(found_student.faculty, expected_student[i]["faculty"])
+
+            
+    def test_searchStudentByID(self):
+        student = create_student(107, "Jane doe", "BSc. Computer Science", "DCIT", "FST")
+        searchStud = get_student_by_id(107)
+
+        expected_student = {
+                "studentID":107, 
+                "studentName":"Jane doe", 
+                "degree":"BSc. Computer Science", 
+                "department":"DCIT", 
+                "faculty":"FST"
+        }
+        
+        self.assertEqual(searchStud.studentID, expected_student["studentID"])
+        self.assertEqual(searchStud.studentName, expected_student["studentName"])
+        self.assertEqual(searchStud.degree, expected_student["degree"])
+        self.assertEqual(searchStud.department, expected_student["department"])
+        self.assertEqual(searchStud.faculty, expected_student["faculty"])
+    
+
+
+    def test_viewStudentReviews(self):
+        student = create_student(108, "Dana Peterson", "BSc. Computer Science", "DCIT", "FST")
+        review1 = create_review(108, 107, "Positive", "Has an amazing ability to remember details")
+        review2 = create_review(108, 107, "Negative", "Did not attend Harvard Law School")
+        
+        searchRev = get_reviews_by_student_id(108)
+
+        expected_reviews = [
+            {
+                "reviewID": review1.reviewID,
+                "studentID": 108,
+                "staffID": 107,
+                "type": "Positive",
+                "content": "Has an amazing ability to remember details"
+            },
+            {
+                "reviewID": review2.reviewID,
+                "studentID": 108,
+                "staffID": 107,
+                "type": "Negative",
+                "content": "Did not attend Harvard Law School"
+            }
+        ]
+
+
+        actual_reviews = [
+            {
+                "reviewID": rev.reviewID,
+                "studentID": rev.studentID,
+                "staffID": rev.staffID,
+                "type": rev.type,
+                "content": rev.content
+            } for rev in searchRev
+        ]
+        
+        self.assertListEqual(expected_reviews, actual_reviews)
 

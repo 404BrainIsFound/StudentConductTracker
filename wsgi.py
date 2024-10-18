@@ -61,6 +61,12 @@ Test Commands
 
 test = AppGroup('test', help='Testing commands') 
 
+
+@test.command("all", help="Run all tests")
+def all_tests_command():
+    sys.exit(pytest.main(["-k", "App"]))
+
+
 @test.command("user", help="Run User tests")
 @click.argument("type", default="all")
 def user_tests_command(type):
@@ -70,7 +76,29 @@ def user_tests_command(type):
         sys.exit(pytest.main(["-k", "UserIntegrationTests"]))
     else:
         sys.exit(pytest.main(["-k", "App"]))
-    
+
+
+@test.command("admin", help="Run Admin tests")
+@click.argument("type", default="all")
+def admin_tests_command(type):
+    if type == "unit":
+        sys.exit(pytest.main(["-k", "AdminUnitTests"]))
+    elif type == "int":
+        sys.exit(pytest.main(["-k", "AdminIntegrationTests"]))
+    else:
+        sys.exit(pytest.main(["-k", "App"]))
+
+
+@test.command("staff", help="Run Staff tests")
+@click.argument("type", default="all")
+def staff_tests_command(type):
+    if type == "unit":
+        sys.exit(pytest.main(["-k", "StaffUnitTests"]))
+    elif type == "int":
+        sys.exit(pytest.main(["-k", "StaffIntegrationTests"]))
+    else:
+        sys.exit(pytest.main(["-k", "App"]))
+
 
 app.cli.add_command(test)
 
