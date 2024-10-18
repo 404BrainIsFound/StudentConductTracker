@@ -10,6 +10,13 @@ def create_review(studentID, staffID, type, content):
 def get_reviews_by_student_id(studentID):
     return Review.query.filter_by(studentID=studentID).all()
 
+def get_reviews_by_student_id_json(studentID):
+    reviews = Review.query.filter_by(studentID=studentID).all()
+    if not reviews:
+        return []
+    reviews = [review.get_json() for review in reviews]
+    return reviews
+
 def get_reviews_by_staff_id(staffID):
     return Review.query.filter_by(staffID=staffID).all()
 

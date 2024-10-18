@@ -19,8 +19,8 @@ from App.controllers import (
     get_student_by_id,
     get_all_students_json,
     get_latest_review_json,
+    get_reviews_by_student_id_json,
     update_user
-    
 )
 
 
@@ -132,17 +132,21 @@ class AdminIntegrationTests(unittest.TestCase):
         student = create_student(102, "Rachel Zane", "BSc. Information Technology", "DCIT", "FST")
         students = get_all_students_json()
         expected_students = [
-                                {"studentID":101, 
-                                "studentName":"Mike Ross", 
-                                "degree":"BSc. Computer Science", 
-                                "department":"DCIT", 
-                                "faculty":"FST"},
-                                {"studentID":102, 
-                                "studentName":"Rachel Zane", 
-                                "degree":"BSc. Information Technology", 
-                                "department":"DCIT", 
-                                "faculty":"FST"}
-                            ]
+            {
+                "studentID":101, 
+                "studentName":"Mike Ross", 
+                "degree":"BSc. Computer Science", 
+                "department":"DCIT", 
+                "faculty":"FST"
+            },
+            {
+                "studentID":102, 
+                "studentName":"Rachel Zane", 
+                "degree":"BSc. Information Technology", 
+                "department":"DCIT", 
+                "faculty":"FST"
+            }
+        ]
         self.assertListEqual(expected_students, students)
 
 
@@ -186,4 +190,29 @@ class StaffIntegrationTests(unittest.TestCase):
         }
         review = get_latest_review_json(104)
         self.assertEqual(expected_review, review)
+    
+    def test_get_reviews_by_student_id(self):
+        staff = create_staff("cooper", "cooperpass")
+        staff = get_user_by_username("cooper")
+        student = student = create_student(105, "Louis Litt", "BSc. Computer Science and Management", "DCIT", "FST")
+        review1 = create_review(105, staff.id, "Negative", "Mean")
+        review2 = create_review(105, staff.id, "Negative", "Short-tempered")
+        expected_reviews = [
+            {
+                "reviewID": review1.reviewID,
+                "studentID": 105,
+                "staffID": staff.id,
+                "type": "Negative",
+                "content": "Mean"
+            },
+            {
+                "reviewID": review2.reviewID,
+                "studentID": 105,
+                "staffID": staff.id,
+                "type": "Negative",
+                "content": "Short-tempered"
+            }
+        ]
+        reviews = get_reviews_by_student_id_json(105)
+        self.assertEqual(expected_reviews, reviews)
 
