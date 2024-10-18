@@ -1,5 +1,5 @@
 from flask import Blueprint, redirect, render_template, request, send_from_directory, jsonify
-from App.controllers import create_user, initialize
+from App.controllers import create_user, initialize, create_student
 
 index_views = Blueprint('index_views', __name__, template_folder='../templates')
 
@@ -15,3 +15,11 @@ def init():
 @index_views.route('/health', methods=['GET'])
 def health_check():
     return jsonify({'status':'healthy'})
+
+
+# #Added Code here
+
+# @index_views.route('/students', methods=['POST'])
+# def create_a_student():
+#     data = request.form['field_name']
+#     return jsonify({'status':'healthy'})
