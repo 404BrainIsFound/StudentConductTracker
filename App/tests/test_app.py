@@ -4,6 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from App.main import create_app
 from App.database import db, create_db
 from App.models import User
+from App.models import Student
 from App.controllers import (
     create_user,
     create_admin,
@@ -18,6 +19,7 @@ from App.controllers import (
     get_all_students_json,
     get_latest_review_json,
     update_user
+    
 )
 
 
@@ -48,6 +50,19 @@ class UserUnitTests(unittest.TestCase):
         password = "mypass"
         user = User("bob", password)
         assert user.check_password(password)
+    
+
+class AdminUnitTests(unittest.TestCase):
+
+    def test_addStudent(self):
+        student = Student(101, "Mike Ross", "BSc. Computer Science", "DCIT", "FST")
+        assert student.studentID == 101
+        assert student.studentName == "Mike Ross"
+        assert student.degree == "BSc. Computer Science"
+        assert student.department == "DCIT"
+        assert student.faculty == "FST"
+
+
 
 '''
     Integration Tests
@@ -142,4 +157,6 @@ class StaffIntegrationTests(unittest.TestCase):
         }
         review = get_latest_review_json(103)
         self.assertEqual(expected_review, review)
+
+
 
