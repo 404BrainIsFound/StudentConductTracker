@@ -5,6 +5,7 @@ from App.main import create_app
 from App.database import db, create_db
 from App.models import User
 from App.models import Student
+from App.models import Review
 from App.controllers import (
     create_user,
     create_admin,
@@ -61,6 +62,16 @@ class AdminUnitTests(unittest.TestCase):
         assert student.degree == "BSc. Computer Science"
         assert student.department == "DCIT"
         assert student.faculty == "FST"
+
+
+class StaffUnitTests(unittest.TestCase):
+
+    def test_addStudentReview(self):
+        review = Review(101, 107, "Positive", "Has an amazing ability to remember details")
+        assert review.studentID == 101
+        assert review.staffID == 107
+        assert review.type == "Positive"
+        assert review.content == "Has an amazing ability to remember details"
 
 
 
