@@ -3,7 +3,7 @@ from App.controllers import create_student
 
 student_views = Blueprint('student_views', __name__)
 
-@student_views.route('/students', methods=['POST'])
+@student_views.route('/students', methods=['POST'])          #didn't do all the tests, for you all to add - just a start
 def add_student():
 
     data = request.get_json()
