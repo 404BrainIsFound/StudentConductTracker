@@ -5,7 +5,7 @@ from flask.cli import with_appcontext, AppGroup
 from App.database import db, get_migrate
 from App.models import User
 from App.main import create_app
-from App.controllers import ( create_user, get_all_users_json, get_all_users, initialize, demo)
+from App.controllers import ( create_user, get_all_users_json, get_all_users, get_user_by_username, initialize, demo)
 from App.controllers.student import *
 from App.controllers.review import *
 
@@ -121,6 +121,13 @@ def add_review_command():
     view_students(students)
     if (len(students) == 0):
         return
+    username = input("Enter staff username: ")
+    staff = get_user_by_username(username)
+    if not staff:
+        return
+    else:
+        if staff.type != "staff":
+            return
     id = input("Enter the ID of the student you wish to make a review for: ")
     if (get_student_by_id(id) is None):
         print("Invalid student ID!")
@@ -131,11 +138,10 @@ def add_review_command():
         if(int(type) == 1): type = "Positive"
         else: type = "Negative"
         content = input("\nEnter student review (Max 150 characters). Pressing ENTER will submit your review.\n")
-        create_review(id, type, content)
+        create_review(id, staff.id, type, content)
         print(f'Successfully added {type} review for student {id}!')
 
 @staff.command("view-reviews", help="View all reviews from a particular student.")
-
 def get_student_reviews_command():
     students = get_all_students()
     view_students(students)
@@ -159,3 +165,4 @@ def view_students(students):
     for student in students:
         student: Student
         print(f'\n{student}\nLatest Review: {get_latest_review(student.studentID)}')
+    print()
