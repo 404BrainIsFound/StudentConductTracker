@@ -1,6 +1,8 @@
 from .staff import create_staff
 from .student import create_student
 from .review import create_review
+from .user import create_user
+from .administrator import create_admin
 from .user import get_user_by_username
 from App.database import db
 
@@ -9,13 +11,15 @@ def initialize():
     db.drop_all()
     db.create_all()
 
-def demo():
-    db.drop_all()
-    db.create_all()
+    create_user("bob", "bobpass")
 
     create_staff("jean", "jeanpass")
     create_staff("scott", "scottpass")
     create_staff("xavier", "xavierpass")
+
+    create_admin("charles", "charlespass")
+    create_admin("logan", "loganpass")
+    create_admin("misty", "mistypass")
 
     staff1 = get_user_by_username("jean")
     staff2 = get_user_by_username("scott")
@@ -39,3 +43,4 @@ def demo():
     create_review(5, staff3.id, "Positive", "Yeah that guy is really unlucky")
     create_review(5, staff1.id, "Posiitve", "This is the last review")
     create_review(5, staff2.id, "Negative", "...or is it?")
+

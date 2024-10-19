@@ -5,7 +5,7 @@ from flask.cli import with_appcontext, AppGroup
 from App.database import db, get_migrate
 from App.models import User
 from App.main import create_app
-from App.controllers import ( create_user, get_all_users_json, get_all_users, get_user_by_username, initialize, demo)
+from App.controllers import ( create_user, get_all_users_json, get_all_users, get_user_by_username, initialize)
 from App.controllers.student import *
 from App.controllers.review import *
 
@@ -20,10 +20,10 @@ def init():
     initialize()
     print('database intialized')
 
-@app.cli.command("demo", help="Sets up a few Student and Review records to play with")
-def build_demo():
-    demo()
-    print("Demo database built")
+# @app.cli.command("demo", help="Sets up a few Student and Review records to play with")
+# def build_demo():
+#     demo()
+#     print("Demo database built")
 
 '''
 User Commands

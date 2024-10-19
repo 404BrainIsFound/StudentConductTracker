@@ -6,14 +6,14 @@ from App.models import User
 
 student_views = Blueprint('student_views', __name__)
 
-@student_views.route('/students/<int:studentID>', methods=['PUT'])          #didn't do all the tests, for you all to add - just a start
+@student_views.route('/students', methods=['POST'])          #didn't do all the tests, for you all to add - just a start
 @jwt_required()
-def add_student(studentID):
+def add_student():
 
     data = request.get_json()
     userID = get_jwt_identity()
     user: User = get_user(userID)
-    if user and user.get_type == "admin":
+    if user and user.type == "admin":
         if not all(key in data for key in ('studentID', 'studentName', 'degree', 'department', 'faculty')):
             return jsonify({"error": "Missing required fields"}), 400        #check to make sure all passed
 
