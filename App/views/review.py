@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
-from App.controllers import get_user, get_student_reviews_json, create_review
+from App.controllers import get_user, get_student_reviews_json, create_review, get_student_by_id
 from App.models import User
 from App.models import Staff
 
@@ -21,6 +21,9 @@ def get_reviews():
                     "error":"missing student id"
                 }), 404
             else:
+                student = get_student_by_id(studentID)
+                if not student:
+                    return jsonify({"message": "student does not exist"})
                 return get_student_reviews_json(studentID=studentID)
         else:
             return jsonify({
@@ -41,6 +44,11 @@ def add_review():
 
         if not all(key in data for key in ('studentID', 'type', 'content')):      #if giving problems comment off - not in spec I think
             return jsonify({"error": "Missing required fields"}), 400
+            
+        studentID = data['studentID']
+        student = get_student_by_id(studentID)
+        if not student:
+            return jsonify({"message": "student does not exist"})
 
         try:
             new_review = create_review(data['studentID'], current_user_id, data['type'], data['content'])

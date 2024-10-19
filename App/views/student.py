@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from App.controllers import create_student, get_user, get_student_by_name_json
+from App.controllers import create_student, get_user, get_student_by_name_json, get_student_by_id
 from App.models import Student
 from App.models import User
 
@@ -23,6 +23,9 @@ def add_student():
         department = data['department']
         faculty = data['faculty']
 
+        student = get_student_by_id(studentID)
+        if student:
+            return jsonify({"message": "student already exists"})
     
         try:
             new_student = create_student(studentID, studentName, degree, department, faculty)  #from controllers
