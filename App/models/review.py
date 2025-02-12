@@ -13,6 +13,9 @@ class Review(db.Model):
         self.type = type
         self.content = content
 
+
+        
+
     def __repr__(self):
         return f'Review Type: {self.type}\nReview: {self.content}'
     
